@@ -7,15 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 
-/**
- * A JTable that shows the Group column as ONE merged cell per group
- * (spanning all members of that group), with the group number centered
- * both horizontally and vertically inside it.
- *
- * Swing has no built-in cell merging, so after the normal table is painted
- * this class paints a merged rectangle over column 0 for each run of rows
- * that belong to the same group.
- */
 public class GroupedTable extends JTable {
 
     private final GroupTableModel groupModel;
@@ -24,7 +15,6 @@ public class GroupedTable extends JTable {
         super(model);
         this.groupModel = model;
         setRowHeight(24);
-        // Keep the Group column fixed at position 0 so the merged painting lines up.
         getTableHeader().setReorderingAllowed(false);
     }
 
@@ -62,18 +52,15 @@ public class GroupedTable extends JTable {
                     last.y + last.height - first.y);
 
             if (clip == null || clip.intersects(merged)) {
-                // Cover the individual cells of this group in column 0.
                 g2.setColor(getBackground());
                 g2.fillRect(merged.x, merged.y, merged.width, merged.height);
-
-                // Redraw only the outer edges (right + bottom) as grid lines.
                 g2.setColor(getGridColor());
                 g2.drawLine(merged.x, merged.y + merged.height - 1,
                         merged.x + merged.width - 1, merged.y + merged.height - 1);
                 g2.drawLine(merged.x + merged.width - 1, merged.y,
                         merged.x + merged.width - 1, merged.y + merged.height - 1);
 
-                // Group number, centered in the merged cell.
+
                 String text = String.valueOf(group + 1);
                 int tx = merged.x + (merged.width - fm.stringWidth(text)) / 2;
                 int ty = merged.y + (merged.height - fm.getHeight()) / 2 + fm.getAscent();
